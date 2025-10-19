@@ -1,0 +1,113 @@
+{
+  "id": "57cea880-f1d3-4e4a-96e5-fd2a1b16f530",
+  "prevId": "1eea8e90-b6e4-4d1a-b9e8-48073c063d36",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "carto_censal.pais8622": {
+      "name": "pais8622",
+      "schema": "carto_censal",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cpr": {
+          "name": "cpr",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "jur": {
+          "name": "jur",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cde": {
+          "name": "cde",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dpto": {
+          "name": "dpto",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cfn": {
+          "name": "cfn",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cro": {
+          "name": "cro",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tro": {
+          "name": "tro",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cod_indec": {
+          "name": "cod_indec",
+          "type": "varchar(9)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shape_area": {
+          "name": "shape_area",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shape_len": {
+          "name": "shape_len",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "geom": {
+          "name": "geom",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "pais8622_cod_indec_pk": {
+          "name": "pais8622_cod_indec_pk",
+          "columns": [
+            "cod_indec"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "carto_censal": "carto_censal"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

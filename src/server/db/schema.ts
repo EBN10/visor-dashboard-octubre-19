@@ -7,6 +7,11 @@ import {
   text,
   primaryKey,
   geometry,
+  pgTable,
+  boolean,
+  jsonb,
+  pgEnum,
+  type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 
 // 1. Primero, definimos el esquema de PostgreSQL que vamos a usar
@@ -37,3 +42,51 @@ export const radiosCensales = cartoCensalSchema.table(
     };
   },
 );
+
+export const layerKind = pgEnum("layer_kind", ["vector", "xyz", "wms"])
+
+export type VectorConfig = {
+  type: "vector"
+  schema: string
+  table: string
+  geomColumn: string
+  srid: number
+  // opcionalmente propiedades a mostrar, estilo, etc.
+  popupProps?: string[]
+}
+
+export type WmsConfig = {
+  type: "wms"
+  url: string
+  layers: string
+  version?: string
+  format?: string
+  transparent?: boolean
+}
+
+export type XyzConfig = {
+  type: "xyz"
+  url: string
+  attribution?: string
+}
+
+export type LayerConfig = VectorConfig | WmsConfig | XyzConfig
+
+export const layerGroups = pgTable("layer_groups", {
+  id: text("id").primaryKey(), // slug, p.ej. "company", "indec"
+  name: text("name").notNull(),
+  parentId: text("parent_id").references((): AnyPgColumn => layerGroups.id),
+  order: integer("order").notNull().default(0),
+})
+
+export const layers = pgTable("layers", {
+  id: text("id").primaryKey(), // slug, p.ej. "radios-censales"
+  name: text("name").notNull(),
+  kind: layerKind("kind").notNull(),
+  groupId: text("group_id")
+    .references(() => layerGroups.id, { onDelete: "cascade" })
+    .notNull(),
+  order: integer("order").notNull().default(0),
+  defaultVisible: boolean("default_visible").notNull().default(false),
+  config: jsonb("config").$type<LayerConfig>().notNull(),
+})

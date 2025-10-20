@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 import {
   checkboxesFeature,
   hotkeysCoreFeature,
@@ -9,56 +10,26 @@ import { useTree } from "@headless-tree/react"
 
 import { Checkbox } from "~/components/ui/checkbox"
 import { Tree, TreeItem, TreeItemLabel } from "~/components/tree"
-
-interface Item {
-  name: string
-  children?: string[]
-}
-
-const items: Record<string, Item> = {
-  company: {
-    name: "Company",
-    children: ["orgnacionales", "orgprovinciales", "unse"],
-  },
-  orgnacionales: {
-    name: "Organismos Nacionales",
-    children: ["inta", "indec"],
-  },
-  inta: { name: "INTA", children: ["unidades-inta", "suelos"] },
-  "unidades-inta": {
-    name: "Unidades INTA",
-    children: ["components", "tokens", "guidelines"],
-  },
-  components: { name: "Components" },
-  tokens: { name: "Tokens" },
-  guidelines: { name: "Guidelines" },
-  "suelos": { name: "Suelos" },
-  indec: { name: "INDEC", children: ["radioscensales", "estasdiscticaspais"] },
-  radioscensales: { name: "Radios Censales" },
-  estasdiscticaspais: { name: "Estadisticas Pais" },
-  orgprovinciales: { name: "Organismos Provinciales", children: ["ministerioeducacion", "ministeriosalud"] },
-  ministerioeducacion: { name: "Ministerio de Educacion" },
-  ministeriosalud: { name: "Ministerio de Salud" },
-  unse: { name: "Universidad Nacional de Santiago del Estero", children: ["fceyt", "fcm"] },
-  fceyt: { name: "FCEyT" },
-  fcm: { name: "FCM" },
-}
+import { useEffect} from "react"
+import { useLayers } from "~/components/layers/provider"
 
 const indent = 20
 
 export default function ArbolCapas() {
-  const tree = useTree<Item>({
+  const { ready, items, visibleLayerIds, setVisibleFromChecked } = useLayers()
+
+  const tree = useTree({
     initialState: {
-      expandedItems: ["engineering", "frontend", "design-system"],
-      checkedItems: ["components", "tokens"],
+      expandedItems: ["company"], // expande raíz al inicio
+      checkedItems: Array.from(visibleLayerIds),
     },
     indent,
     rootItemId: "company",
-    getItemName: (item) => item.getItemData().name,
+    getItemName: (item) => item.getItemData()!.name,
     isItemFolder: (item) => (item.getItemData()?.children?.length ?? 0) > 0,
     dataLoader: {
-      getItem: (itemId) => items[itemId],
-      getChildren: (itemId) => items[itemId].children ?? [],
+      getItem: (itemId: string) => items[itemId],
+      getChildren: (itemId: string) => items[itemId]?.children ?? [],
     },
     features: [
       syncDataLoaderFeature,
@@ -68,10 +39,20 @@ export default function ArbolCapas() {
     ],
   })
 
+  // Cuando cambia el "items" o el visible inicial, sincronizamos checks
+  useEffect(() => {
+    if (!ready) return
+    // Ajusta items checkeados en el árbol desde el provider
+    tree.setCheckedItems(Array.from(visibleLayerIds))
+  }, [ready, visibleLayerIds, tree])
+
+  if (!ready) return <div className="p-2 text-sm">Cargando capas…</div>
+
   return (
     <div className="flex h-full flex-col gap-2 *:first:grow">
       <Tree indent={indent} tree={tree}>
         {tree.getItems().map((item) => {
+          const checkboxProps = item.getCheckboxProps()
           return (
             <div
               key={item.getId()}
@@ -86,8 +67,10 @@ export default function ArbolCapas() {
                   }[item.getCheckedState()]
                 }
                 onCheckedChange={(checked) => {
-                  const checkboxProps = item.getCheckboxProps()
-                  checkboxProps.onChange?.({ target: { checked } })
+                  // Actualiza el estado interno del árbol
+                  checkboxProps.onChange?.({ target: { checked }})
+                  // Sincroniza Provider con todos los items checkeados del árbol
+                  setVisibleFromChecked(tree.getCheckedItems())
                 }}
               />
               <TreeItem item={item} className="flex-1 not-last:pb-0">

@@ -15,6 +15,13 @@
       "when": 1760915775131,
       "tag": "0001_youthful_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760918274895,
+      "tag": "0002_rapid_warbird",
+      "breakpoints": true
     }
   ]
 }

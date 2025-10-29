@@ -1,7 +1,12 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react"
-import type { LayerConfig } from "~/server/db/schema";
+import { createContext, useContext, useEffect, useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import type { LayerConfig } from "~/server/db/schema"
+import { fetchJson, qk } from "~/lib/api"
+
+// Synthetic root id for tree
+export const ROOT_ID = "root"
 
 type Item = { name: string; children?: string[] }
 
@@ -30,18 +35,21 @@ type LayersContextValue = {
 
 const LayersContext = createContext<LayersContextValue | null>(null)
 
-function nodesToItems(nodes: LayerNodeMeta[]) {
+function nodesToItemsWithRoot(nodes: LayerNodeMeta[]) {
   const items: Record<string, Item> = {}
-  const children: Record<string, string[]> = {}
+  const children: Record<string, string[]> = { [ROOT_ID]: [] }
 
   // ensure all groups/items exist
   nodes.forEach((n) => {
-    items[n.id] ??= { name: n.name, children: [] };
+    items[n.id] ??= { name: n.name, children: [] }
   })
 
+  // collect root-level nodes under synthetic ROOT_ID
   nodes.forEach((n) => {
-    if (n.parentId) {
-      children[n.parentId] ??= [];
+    if (!n.parentId) {
+      children[ROOT_ID]!.push(n.id)
+    } else {
+      children[n.parentId] ??= []
       children[n.parentId]!.push(n.id)
     }
   })
@@ -62,74 +70,65 @@ function nodesToItems(nodes: LayerNodeMeta[]) {
     items[n.id]!.children = children[n.id] ?? []
   })
 
+  // add synthetic root
+  items[ROOT_ID] = { name: "Capas", children: children[ROOT_ID] ?? [] }
+
   return items
 }
 
 export function LayersProvider(props: { children: React.ReactNode }) {
-  const [ready, setReady] = useState(false)
-  const [items, setItems] = useState<Record<string, Item>>({})
-  const [metas, setMetas] = useState<Record<string, LayerNodeMeta>>({})
-  const [visibleLayerIds, setVisibleLayerIds] = useState<Set<string>>(
-    new Set(),
-  )
+  const [visibleLayerIds, setVisibleLayerIds] = useState<Set<string>>(new Set())
 
-useEffect(() => {
-  let cancelled = false
+  const catalogQuery = useQuery({
+    queryKey: qk.catalog,
+    queryFn: () => fetchJson<CatalogResponse>("/api/catalog"),
+  })
 
-  async function loadCatalog() {
-    try {
-      const res = await fetch("/api/catalog", { cache: "no-store" })
-      const data = (await res.json()) as CatalogResponse
-      if (cancelled) return
-
-      const metasById: Record<string, LayerNodeMeta> = {}
-      data.nodes.forEach((n) => {
-        metasById[n.id] = n
-      })
-
-      setMetas(metasById)
-      setItems(nodesToItems(data.nodes))
-
-      // visible inicial: las capas con defaultVisible
-      const vis = new Set<string>()
-      data.nodes.forEach((n) => {
-        if (n.type === "layer" && n.defaultVisible) vis.add(n.id)
-      })
-      setVisibleLayerIds(vis)
-      setReady(true)
-    } catch (error) {
-      console.error("Error cargando catálogo:", error)
+  const metas = useMemo(() => {
+    const byId: Record<string, LayerNodeMeta> = {}
+    if (catalogQuery.data?.nodes) {
+      for (const n of catalogQuery.data.nodes) byId[n.id] = n
     }
-  }
+    return byId
+  }, [catalogQuery.data])
 
-  loadCatalog().catch(console.error) // ejecuta la función asíncrona
+  const items = useMemo(() => {
+    if (!catalogQuery.data?.nodes) {
+      return {}
+    }
+    const built = nodesToItemsWithRoot(catalogQuery.data.nodes)
+    return built
+  }, [catalogQuery.data])
 
-  return () => {
-    cancelled = true
-  }
-}, [])
+  // initialize visible defaults when data arrives the first time
+  useEffect(() => {
+    if (!catalogQuery.data?.nodes) return
+    // only initialize once when currently empty
+    if (visibleLayerIds.size === 0) {
+      const vis = new Set<string>()
+      for (const n of catalogQuery.data.nodes) {
+        if (n.type === "layer" && n.defaultVisible) vis.add(n.id)
+      }
+      setVisibleLayerIds(vis)
+    }
+  }, [catalogQuery.data, visibleLayerIds.size])
 
   const value = useMemo<LayersContextValue>(
     () => ({
-      ready,
+      ready: catalogQuery.isSuccess,
       items,
       metas,
       visibleLayerIds,
       setVisibleFromChecked: (checkedIds: string[]) => {
-        const onlyLayers = checkedIds.filter(
-          (id) => metas[id]?.type === "layer",
-        )
-        setVisibleLayerIds(new Set(onlyLayers))
+        const onlyLayers = checkedIds.filter((id) => metas[id]?.type === "layer")
+        const next = new Set(onlyLayers)
+        setVisibleLayerIds(next)
       },
     }),
-    [ready, items, metas, visibleLayerIds],
+    [catalogQuery.isSuccess, items, metas, visibleLayerIds],
   )
 
-  return (
-    <LayersContext.Provider value={value}>
-      {props.children}
-    </LayersContext.Provider>
-  )
+  return <LayersContext.Provider value={value}>{props.children}</LayersContext.Provider>
 }
 
 export function useLayers() {

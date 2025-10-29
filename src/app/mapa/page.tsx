@@ -15,12 +15,14 @@ import {
 } from "~/components/ui/sidebar"
 import "leaflet/dist/leaflet.css"
 import { LayersProvider } from "~/components/layers/provider"
+import { QueryProvider } from "~/components/query/QueryProvider"
 
 function App() {
   return (
     <SidebarProvider>
-      <LayersProvider>
-        <Sidebar>
+      <QueryProvider>
+        <LayersProvider>
+          <Sidebar>
           <SidebarHeader>
             <div className="flex w-full gap-1.5 hover:bg-gray-400/10 rounded-2xl items-center p-3">
               <img
@@ -44,7 +46,7 @@ function App() {
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
-        <SidebarInset>
+          <SidebarInset>
           <div className="flex gap-2 p-3">
             <SidebarTrigger />
             <h1 className="text-lg font-bold w-full text-center">
@@ -52,8 +54,9 @@ function App() {
             </h1>
           </div>
           <Mapa />
-        </SidebarInset>
-      </LayersProvider>
+          </SidebarInset>
+        </LayersProvider>
+      </QueryProvider>
     </SidebarProvider>
   )
 }

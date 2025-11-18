@@ -15,12 +15,10 @@ import {
 } from "~/components/ui/sidebar"
 import "leaflet/dist/leaflet.css"
 import { LayersProvider } from "~/components/layers/provider"
-import { QueryProvider } from "~/components/query/QueryProvider"
 
 function App() {
   return (
     <SidebarProvider>
-      <QueryProvider>
         <LayersProvider>
           <Sidebar>
           <SidebarHeader>
@@ -56,7 +54,6 @@ function App() {
           <Mapa />
           </SidebarInset>
         </LayersProvider>
-      </QueryProvider>
     </SidebarProvider>
   )
 }

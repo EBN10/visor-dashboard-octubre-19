@@ -45,12 +45,22 @@ function LayerTreeView({
     ],
   })
 
+  // Sync initial state from props
   useEffect(() => {
     try {
-      tree.expandItem?.(ROOT_ID)
+      (tree as any).expandItem?.(ROOT_ID)
     } catch {}
-    tree.setCheckedItems(Array.from(visibleLayerIds))
   }, [])
+
+  // Sync prop changes to tree (e.g. defaults loaded)
+  useEffect(() => {
+    tree.setCheckedItems(Array.from(visibleLayerIds))
+  }, [visibleLayerIds])
+
+  // Sync prop changes to tree (e.g. defaults loaded)
+  useEffect(() => {
+    tree.setCheckedItems(Array.from(visibleLayerIds))
+  }, [visibleLayerIds])
 
   return (
     <Tree indent={indent} tree={tree}>
@@ -73,11 +83,16 @@ function LayerTreeView({
               }
               onCheckedChange={(checked) => {
                 checkboxProps.onChange?.({ target: { checked } })
-                const checkedItems = tree
-                  .getItems()
-                  .filter((i: any) => i.getCheckedState() === "checked")
-                  .map((i: any) => i.getId())
-                setVisibleFromChecked(checkedItems)
+                // We need to wait for the tree to update its internal state? 
+                // headless-tree usually updates synchronously or we might need to defer this?
+                // Let's try deferring slightly or assuming synchronous update if it's not React state based.
+                // Actually, let's use a timeout to let the tree update process.
+                requestAnimationFrame(() => {
+                   const checkedItems = tree.getItems()
+                    .filter((i: any) => i.getCheckedState() === "checked")
+                    .map((i: any) => i.getId())
+                   setVisibleFromChecked(checkedItems)
+                })
               }}
             />
             <TreeItem item={item} className="flex-1 not-last:pb-0">

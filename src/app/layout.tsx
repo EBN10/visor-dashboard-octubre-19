@@ -11,6 +11,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -30,7 +31,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${geist.variable}`}>
         <QueryProvider>
-          <body className="dark">{children}</body>
+          <body className="dark">
+            {children}
+            <Toaster />
+          </body>
         </QueryProvider>
       </html>
     </ClerkProvider>

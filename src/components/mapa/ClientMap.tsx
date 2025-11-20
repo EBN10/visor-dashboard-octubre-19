@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState, useEffect } from "react"
 import {
   MapContainer,
   Rectangle,
@@ -13,6 +13,7 @@ import { WMSTileLayer } from "react-leaflet"
 import { useQuery } from "@tanstack/react-query"
 import { fetchJson, qk } from "~/lib/api"
 import { useEventHandlers, useLeafletContext } from "@react-leaflet/core"
+import L from "leaflet"
 import type {
   Map as LeafletMap,
   LeafletEvent,
@@ -21,7 +22,18 @@ import type {
 import type { FeatureCollection } from "geojson"
 import { useLayers } from "~/components/layers/provider"
 
-// Keep all react-leaflet usage here to avoid SSR evaluation
+// Fix Leaflet default icon issue
+// See: https://github.com/Leaflet/Leaflet/issues/4968
+const DefaultIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+})
+L.Marker.prototype.options.icon = DefaultIcon
 
 type Position = "bottomleft" | "bottomright" | "topleft" | "topright"
 
@@ -133,7 +145,7 @@ function useMapViewport() {
   return viewport
 }
 
-function VectorLayer({ id, color }: { id: string; color?: string }) {
+function VectorLayer({ id, color, popupProps }: { id: string; color?: string; popupProps?: string[] }) {
   const { bounds, zoom } = useMapViewport()
   const bbox = boundsToBboxParam(bounds)
 
@@ -162,16 +174,25 @@ function VectorLayer({ id, color }: { id: string; color?: string }) {
       // Lee propiedades de la feature
       const p = (feature.properties ?? {}) as Record<string, any>
 
-      // Props que querés mostrar en el popup
-      // Puedes “cablearlas” aquí o leerlas del catálogo (metas[id].config.popupProps)
-      const props = ["cod_indec", "jur", "dpto"]
+      // Use configured popup properties or fallback to all
+      const propsToShow = popupProps && popupProps.length > 0 
+        ? popupProps 
+        : Object.keys(p)
+
+      if (propsToShow.length === 0) return
 
       // Construye HTML simple
-      const html = props
-        .map((k) => `<div><b>${k}:</b> ${p?.[k] ?? ""}</div>`)
+      const html = propsToShow
+        .map((k) => {
+          const val = p?.[k]
+          if (val === undefined || val === null) return ""
+          return `<div class="mb-1"><b>${k}:</b> ${val}</div>`
+        })
         .join("")
 
-      layer.bindPopup(`<div style="min-width:180px">${html}</div>`)
+      if (html) {
+        layer.bindPopup(`<div style="min-width:180px; max-height: 300px; overflow-y: auto;">${html}</div>`)
+      }
     }}
   />
 )
@@ -212,12 +233,14 @@ function LayerRenderer() {
         if (!m) return null
         if (m.type !== "layer") return null
         if (m.kind === "vector") {
+          const cfg = m.config as any // Cast to access popupProps safely
           return (
             <VectorLayer
               key={m.id}
               id={m.id}
               // puedes mapear color por capa si quieres:
               color="#0066cc"
+              popupProps={cfg.popupProps}
             />
           )
         }

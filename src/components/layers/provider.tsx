@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react"
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { LayerConfig } from "~/server/db/schema"
 import { fetchJson, qk } from "~/lib/api"
@@ -113,19 +113,30 @@ export function LayersProvider(props: { children: React.ReactNode }) {
     }
   }, [catalogQuery.data, visibleLayerIds.size])
 
+  const setVisibleFromChecked = useCallback(
+    (checkedIds: string[]) => {
+      const onlyLayers = checkedIds.filter((id) => metas[id]?.type === "layer")
+      const next = new Set(onlyLayers)
+      
+      setVisibleLayerIds((prev) => {
+        if (prev.size === next.size && [...prev].every((x) => next.has(x))) {
+          return prev
+        }
+        return next
+      })
+    },
+    [metas],
+  )
+
   const value = useMemo<LayersContextValue>(
     () => ({
       ready: catalogQuery.isSuccess,
       items,
       metas,
       visibleLayerIds,
-      setVisibleFromChecked: (checkedIds: string[]) => {
-        const onlyLayers = checkedIds.filter((id) => metas[id]?.type === "layer")
-        const next = new Set(onlyLayers)
-        setVisibleLayerIds(next)
-      },
+      setVisibleFromChecked,
     }),
-    [catalogQuery.isSuccess, items, metas, visibleLayerIds],
+    [catalogQuery.isSuccess, items, metas, visibleLayerIds, setVisibleFromChecked],
   )
 
   return <LayersContext.Provider value={value}>{props.children}</LayersContext.Provider>

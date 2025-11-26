@@ -18,6 +18,7 @@ import {
   SidebarSeparator,
 } from "~/components/ui/sidebar"
 import ArbolCapas from "~/components/comp-598"
+import Image from "next/image"
 
 export function MapSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -27,11 +28,11 @@ export function MapSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <MapIcon className="size-4" />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-black text-sidebar-primary-foreground">
+                  <Image src="/logo-dir.estadisticasycensos.png" alt="Logo" width={30} height={30} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Visor de Mapas</span>
+                  <span className="truncate font-semibold">Visor de Mapa</span>
                   <span className="truncate text-xs">Dirección de Estadísticas</span>
                 </div>
               </a>

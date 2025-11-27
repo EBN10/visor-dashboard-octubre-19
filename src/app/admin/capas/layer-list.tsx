@@ -43,19 +43,19 @@ export function LayerList({ layers }: { layers: any[] }) {
       })
     },
     onSuccess: () => {
-      toast.success("Layer deleted successfully")
+      toast.success("Capa eliminada exitosamente")
       queryClient.invalidateQueries({ queryKey: ["admin", "layers"] })
       queryClient.invalidateQueries({ queryKey: qk.catalog })
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to delete layer")
+      toast.error(error.message || "Error al eliminar la capa")
     },
   })
 
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>Existing Layers</CardTitle>
+        <CardTitle>Capas Existentes</CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[600px] pr-4">
@@ -89,19 +89,19 @@ export function LayerList({ layers }: { layers: any[] }) {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the layer
+                          Esta acción no se puede deshacer. Esto eliminará permanentemente la capa
                           "{layer.name}".
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           onClick={() => deleteLayerMutation.mutate(layer.id)}
                         >
-                          Delete
+                          Eliminar
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -115,7 +115,7 @@ export function LayerList({ layers }: { layers: any[] }) {
         <Dialog open={!!editingLayer} onOpenChange={(open) => !open && setEditingLayer(null)}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Layer</DialogTitle>
+              <DialogTitle>Editar Capa</DialogTitle>
             </DialogHeader>
             {editingLayer && (
               <LayerEditForm 

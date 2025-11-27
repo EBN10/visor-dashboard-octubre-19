@@ -30,7 +30,7 @@ export default function QgisImportPage() {
 
   const uploadMutation = useMutation({
     mutationFn: async () => {
-      if (!file || !name || !groupId) throw new Error("Please fill all fields")
+      if (!file || !name || !groupId) throw new Error("Por favor completa todos los campos")
       
       const formData = new FormData()
       formData.append("file", file)
@@ -43,13 +43,13 @@ export default function QgisImportPage() {
       })
 
       if (!res.ok) {
-        let errorMessage = "Upload failed"
+        let errorMessage = "Error en la subida"
         try {
           const err = await res.json()
           errorMessage = err.error || errorMessage
         } catch (e) {
           console.error("Failed to parse error response", e)
-          errorMessage = `Upload failed with status ${res.status}`
+          errorMessage = `Error en la subida con estado ${res.status}`
         }
         throw new Error(errorMessage)
       }
@@ -57,7 +57,7 @@ export default function QgisImportPage() {
       return res.json()
     },
     onSuccess: () => {
-      toast.success("Layer imported successfully!")
+      toast.success("¡Capa importada exitosamente!")
       setFile(null)
       setName("")
       setGroupId("")
@@ -73,24 +73,24 @@ export default function QgisImportPage() {
     <div className="max-w-2xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Import from QGIS (GeoJSON)</CardTitle>
+          <CardTitle>Importar desde QGIS (GeoJSON)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Layer Name</Label>
+            <Label htmlFor="name">Nombre de la Capa</Label>
             <Input 
               id="name" 
-              placeholder="My Imported Layer" 
+              placeholder="Mi Capa Importada" 
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="group">Group</Label>
+            <Label htmlFor="group">Grupo</Label>
             <Select value={groupId} onValueChange={setGroupId}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a group" />
+                <SelectValue placeholder="Seleccionar un grupo" />
               </SelectTrigger>
               <SelectContent>
                 {groupsQuery.data?.map((g) => (
@@ -103,7 +103,7 @@ export default function QgisImportPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="file">GeoJSON File</Label>
+            <Label htmlFor="file">Archivo GeoJSON</Label>
             <Input 
               id="file" 
               type="file" 
@@ -111,7 +111,7 @@ export default function QgisImportPage() {
               onChange={(e) => setFile(e.target.files?.[0] || null)}
             />
             <p className="text-sm text-muted-foreground">
-              Upload a GeoJSON file exported from QGIS. It will be converted to a PostGIS table.
+              Sube un archivo GeoJSON exportado desde QGIS. Será convertido a una tabla PostGIS.
             </p>
           </div>
 
@@ -121,7 +121,7 @@ export default function QgisImportPage() {
             disabled={uploadMutation.isPending || !file || !name || !groupId}
           >
             {uploadMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {uploadMutation.isPending ? "Importing..." : "Import Layer"}
+            {uploadMutation.isPending ? "Importando..." : "Importar Capa"}
           </Button>
         </CardContent>
       </Card>

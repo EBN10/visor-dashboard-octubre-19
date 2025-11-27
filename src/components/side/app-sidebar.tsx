@@ -38,13 +38,13 @@ const data = {
   },
   navMain: [
     {
-      title: "Admin",
+      title: "Administración",
       url: "/admin",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "Dashboard",
+          title: "Panel de Control",
           url: "/admin",
         },
         {
@@ -80,7 +80,7 @@ const data = {
       icon: LifeBuoy,
     },
     {
-      title: "Feedback",
+      title: "Comentarios",
       url: "#",
       icon: Send,
     },
@@ -99,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Visor Admin</span>
+                  <span className="truncate font-semibold">Administración del Visor</span>
                   <span className="truncate text-xs">v1.0.0</span>
                 </div>
               </a>

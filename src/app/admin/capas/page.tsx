@@ -24,8 +24,8 @@ export default function AdminCapasPage() {
     <div className="space-y-6">
       <Tabs defaultValue="layers" className="w-full">
         <TabsList>
-          <TabsTrigger value="layers">Layers</TabsTrigger>
-          <TabsTrigger value="groups">Groups</TabsTrigger>
+          <TabsTrigger value="layers">Capas</TabsTrigger>
+          <TabsTrigger value="groups">Grupos</TabsTrigger>
         </TabsList>
         
         <TabsContent value="layers" className="space-y-6">
@@ -33,7 +33,7 @@ export default function AdminCapasPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Create New Layer</CardTitle>
+                  <CardTitle>Crear Nueva Capa</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <LayerForm groups={groupsQuery.data ?? []} />

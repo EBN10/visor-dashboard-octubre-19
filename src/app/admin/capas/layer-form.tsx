@@ -28,9 +28,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { fetchJson, qk } from "~/lib/api"
 
 const layerSchema = z.object({
-  id: z.string().min(2, "ID must be at least 2 characters"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  groupId: z.string().min(1, "Group is required"),
+  id: z.string().min(2, "El ID debe tener al menos 2 caracteres"),
+  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  groupId: z.string().min(1, "El grupo es requerido"),
   kind: z.enum(["vector", "wms", "xyz"]),
   order: z.coerce.number().default(0),
   defaultVisible: z.boolean().default(false),
@@ -51,16 +51,16 @@ const layerSchema = z.object({
     attribution: z.string().optional(),
   }).superRefine((data, ctx) => {
     if (data.type === "vector") {
-      if (!data.schema) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Schema is required", path: ["schema"] })
-      if (!data.table) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Table is required", path: ["table"] })
-      if (!data.geomColumn) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Geom Column is required", path: ["geomColumn"] })
+      if (!data.schema) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "El esquema es requerido", path: ["schema"] })
+      if (!data.table) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "La tabla es requerida", path: ["table"] })
+      if (!data.geomColumn) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "La columna de geometría es requerida", path: ["geomColumn"] })
     }
     if (data.type === "wms") {
-      if (!data.url) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "URL is required", path: ["url"] })
-      if (!data.layers) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Layers is required", path: ["layers"] })
+      if (!data.url) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "La URL es requerida", path: ["url"] })
+      if (!data.layers) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Las capas son requeridas", path: ["layers"] })
     }
     if (data.type === "xyz") {
-      if (!data.url) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "URL is required", path: ["url"] })
+      if (!data.url) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "La URL es requerida", path: ["url"] })
     }
   })
 })
@@ -97,13 +97,13 @@ export function LayerForm({ groups }: { groups: any[] }) {
       })
     },
     onSuccess: () => {
-      toast.success("Layer created successfully")
+      toast.success("Capa creada exitosamente")
       form.reset()
       queryClient.invalidateQueries({ queryKey: ["admin", "layers"] })
       queryClient.invalidateQueries({ queryKey: qk.catalog })
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to create layer")
+      toast.error(error.message || "Error al crear la capa")
     },
   })
 
@@ -133,7 +133,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Nombre</FormLabel>
                 <FormControl>
                   <Input placeholder="My Layer" {...field} />
                 </FormControl>
@@ -149,11 +149,11 @@ export function LayerForm({ groups }: { groups: any[] }) {
             name="groupId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Group</FormLabel>
+                <FormLabel>Grupo</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a group" />
+                      <SelectValue placeholder="Seleccionar un grupo" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -173,7 +173,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
             name="kind"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Type</FormLabel>
+                <FormLabel>Tipo</FormLabel>
                 <Select
                   onValueChange={(val) => {
                     field.onChange(val)
@@ -183,11 +183,11 @@ export function LayerForm({ groups }: { groups: any[] }) {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder="Seleccionar tipo" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="vector">Vector</SelectItem>
+                    <SelectItem value="vector">Vectorial</SelectItem>
                     <SelectItem value="wms">WMS</SelectItem>
                     <SelectItem value="xyz">XYZ</SelectItem>
                   </SelectContent>
@@ -204,7 +204,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
             name="order"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Order</FormLabel>
+                <FormLabel>Orden</FormLabel>
                 <FormControl>
                   <Input type="number" {...field} />
                 </FormControl>
@@ -218,7 +218,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                 <div className="space-y-0.5">
-                  <FormLabel>Default Visible</FormLabel>
+                  <FormLabel>Visible por defecto</FormLabel>
                 </div>
                 <FormControl>
                   <Switch
@@ -233,14 +233,14 @@ export function LayerForm({ groups }: { groups: any[] }) {
 
         {kind === "vector" && (
           <div className="space-y-4 rounded-md border p-4">
-            <h4 className="font-medium">Vector Configuration</h4>
+            <h4 className="font-medium">Configuración Vectorial</h4>
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="config.schema"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Schema</FormLabel>
+                    <FormLabel>Esquema</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -253,7 +253,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
                 name="config.table"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Table</FormLabel>
+                    <FormLabel>Tabla</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -266,7 +266,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
                 name="config.geomColumn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Geometry Column</FormLabel>
+                    <FormLabel>Columna de Geometría</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -293,7 +293,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
               name="config.props"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Properties (comma separated)</FormLabel>
+                  <FormLabel>Propiedades (separadas por coma)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="prop1, prop2"
@@ -314,7 +314,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
 
         {kind === "wms" && (
           <div className="space-y-4 rounded-md border p-4">
-            <h4 className="font-medium">WMS Configuration</h4>
+            <h4 className="font-medium">Configuración WMS</h4>
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -334,7 +334,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
                 name="config.layers"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Layers</FormLabel>
+                    <FormLabel>Capas</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -347,7 +347,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
                 name="config.version"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Version</FormLabel>
+                    <FormLabel>Versión</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -360,7 +360,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
                 name="config.format"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Format</FormLabel>
+                    <FormLabel>Formato</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -374,7 +374,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
 
         {kind === "xyz" && (
           <div className="space-y-4 rounded-md border p-4">
-            <h4 className="font-medium">XYZ Configuration</h4>
+            <h4 className="font-medium">Configuración XYZ</h4>
             <FormField
               control={form.control}
               name="config.url"
@@ -393,7 +393,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
               name="config.attribution"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Attribution</FormLabel>
+                  <FormLabel>Atribución</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -405,7 +405,7 @@ export function LayerForm({ groups }: { groups: any[] }) {
         )}
 
         <Button type="submit" disabled={createLayerMutation.isPending}>
-          {createLayerMutation.isPending ? "Creating..." : "Create Layer"}
+          {createLayerMutation.isPending ? "Creando..." : "Crear Capa"}
         </Button>
       </form>
     </Form>

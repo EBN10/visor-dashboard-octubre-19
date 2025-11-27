@@ -41,7 +41,7 @@ export function LayerEditForm({ layer, groups, onClose }: LayerEditFormProps) {
       })
     },
     onSuccess: () => {
-      toast.success("Layer updated")
+      toast.success("Capa actualizada")
       queryClient.invalidateQueries({ queryKey: ["admin", "layers"] })
       queryClient.invalidateQueries({ queryKey: qk.catalog })
       onClose()
@@ -72,12 +72,12 @@ export function LayerEditForm({ layer, groups, onClose }: LayerEditFormProps) {
   return (
     <div className="space-y-4 py-4">
       <div className="space-y-2">
-        <Label>Name</Label>
+        <Label>Nombre</Label>
         <Input value={name} onChange={(e) => setName(e.target.value)} />
       </div>
 
       <div className="space-y-2">
-        <Label>Group</Label>
+        <Label>Grupo</Label>
         <Select value={groupId} onValueChange={setGroupId}>
           <SelectTrigger>
             <SelectValue />
@@ -98,30 +98,30 @@ export function LayerEditForm({ layer, groups, onClose }: LayerEditFormProps) {
           checked={defaultVisible}
           onCheckedChange={setDefaultVisible}
         />
-        <Label htmlFor="visible">Default Visible</Label>
+        <Label htmlFor="visible">Visible por defecto</Label>
       </div>
 
       {layer.kind === "vector" && (
         <div className="space-y-2">
-          <Label>Popup Properties (comma separated)</Label>
+          <Label>Propiedades del Popup (separadas por coma)</Label>
           <Input
             value={popupProps}
             onChange={(e) => setPopupProps(e.target.value)}
-            placeholder="e.g. name, description, id"
+            placeholder="ej. nombre, descripcion, id"
           />
           <p className="text-xs text-muted-foreground">
-            Fields to show in the popup when clicked.
+            Campos para mostrar en el popup al hacer clic.
           </p>
         </div>
       )}
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onClose}>
-          Cancel
+          Cancelar
         </Button>
         <Button onClick={handleSave} disabled={updateMutation.isPending}>
           {updateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save Changes
+          Guardar Cambios
         </Button>
       </div>
     </div>

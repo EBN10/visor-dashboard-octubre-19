@@ -18,34 +18,34 @@ export default function AdminDashboard() {
 
   const stats = [
     {
-      title: "Total Layers",
+      title: "Capas Totales",
       value: layersQuery.data?.length || 0,
       icon: Layers,
-      description: "Active map layers",
+      description: "Capas de mapa activas",
     },
     {
-      title: "Layer Groups",
+      title: "Grupos de Capas",
       value: groupsQuery.data?.length || 0,
       icon: Server,
-      description: "Organized categories",
+      description: "Categorías organizadas",
     },
     {
-      title: "Total Users",
+      title: "Usuarios Totales",
       value: "12", // Placeholder
       icon: Users,
-      description: "Registered admins",
+      description: "Administradores registrados",
     },
     {
-      title: "Map Views",
+      title: "Vistas del Mapa",
       value: "1,234", // Placeholder
       icon: Map,
-      description: "Total map impressions",
+      description: "Impresiones totales del mapa",
     },
   ]
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.title}>
@@ -68,30 +68,30 @@ export default function AdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>Actividad Reciente</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              No recent activity to show.
+              No hay actividad reciente para mostrar.
             </p>
           </CardContent>
         </Card>
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>System Status</CardTitle>
+            <CardTitle>Estado del Sistema</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm">Database</span>
-                <span className="text-sm text-green-500">Connected</span>
+                <span className="text-sm">Base de Datos</span>
+                <span className="text-sm text-green-500">Conectado</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">API</span>
-                <span className="text-sm text-green-500">Operational</span>
+                <span className="text-sm text-green-500">Operacional</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Version</span>
+                <span className="text-sm">Versión</span>
                 <span className="text-sm">v1.0.0</span>
               </div>
             </div>

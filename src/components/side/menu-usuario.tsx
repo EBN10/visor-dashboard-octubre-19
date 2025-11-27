@@ -17,34 +17,34 @@ function    MenuUsuario() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Opcion 1</DropdownMenuLabel>
+        <DropdownMenuLabel>Opción 1</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            Option 1.1
+            Opción 1.1
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Option 1.2
+            Opción 1.2
             <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Option 1.3
+            Opción 1.3
             <DropdownMenuShortcut>⇧⌘X</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Opcion 2</DropdownMenuLabel>
+        <DropdownMenuLabel>Opción 2</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            Option 2.1
+            Opción 2.1
             <DropdownMenuShortcut>⇧⌘E</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Option 2.2
+            Opción 2.2
             <DropdownMenuShortcut>⇧⌘A</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Option 2.3
+            Opción 2.3
             <DropdownMenuShortcut>⇧⌘O</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>

@@ -54,7 +54,7 @@ export function GroupList({ groups }: { groups: any[] }) {
       })
     },
     onSuccess: () => {
-      toast.success("Group created")
+      toast.success("Grupo creado")
       queryClient.invalidateQueries({ queryKey: ["admin", "layer-groups"] })
       setIsCreateOpen(false)
       setFormData({ id: "", name: "", order: 0 })
@@ -70,7 +70,7 @@ export function GroupList({ groups }: { groups: any[] }) {
       })
     },
     onSuccess: () => {
-      toast.success("Group updated")
+      toast.success("Grupo actualizado")
       queryClient.invalidateQueries({ queryKey: ["admin", "layer-groups"] })
       setIsEditOpen(false)
     },
@@ -83,7 +83,7 @@ export function GroupList({ groups }: { groups: any[] }) {
       })
     },
     onSuccess: () => {
-      toast.success("Group deleted")
+      toast.success("Grupo eliminado")
       queryClient.invalidateQueries({ queryKey: ["admin", "layer-groups"] })
     },
     onError: (err: any) => toast.error(err.message),
@@ -106,16 +106,16 @@ export function GroupList({ groups }: { groups: any[] }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Layer Groups</CardTitle>
+        <CardTitle>Grupos de Capas</CardTitle>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
             <Button size="sm" onClick={() => setFormData({ id: "", name: "", order: 0 })}>
-              <Plus className="mr-2 h-4 w-4" /> New Group
+              <Plus className="mr-2 h-4 w-4" /> Nuevo Grupo
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Layer Group</DialogTitle>
+              <DialogTitle>Crear Grupo de Capas</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
@@ -127,7 +127,7 @@ export function GroupList({ groups }: { groups: any[] }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Name</Label>
+                <Label>Nombre</Label>
                 <Input 
                   value={formData.name} 
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -135,7 +135,7 @@ export function GroupList({ groups }: { groups: any[] }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Order</Label>
+                <Label>Orden</Label>
                 <Input 
                   type="number"
                   value={formData.order} 
@@ -143,7 +143,7 @@ export function GroupList({ groups }: { groups: any[] }) {
                 />
               </div>
               <Button onClick={handleCreate} disabled={createMutation.isPending}>
-                Create
+                Crear
               </Button>
             </div>
           </DialogContent>
@@ -153,10 +153,10 @@ export function GroupList({ groups }: { groups: any[] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>Nombre</TableHead>
               <TableHead>ID</TableHead>
-              <TableHead>Order</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>Orden</TableHead>
+              <TableHead className="w-[100px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -178,18 +178,18 @@ export function GroupList({ groups }: { groups: any[] }) {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Group?</AlertDialogTitle>
+                        <AlertDialogTitle>¿Eliminar Grupo?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will delete the group "{group.name}". Layers in this group will be deleted (cascade).
+                          Esto eliminará el grupo "{group.name}". Las capas en este grupo serán eliminadas (cascada).
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
                         <AlertDialogAction 
                           className="bg-destructive"
                           onClick={() => deleteMutation.mutate(group.id)}
                         >
-                          Delete
+                          Eliminar
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -203,18 +203,18 @@ export function GroupList({ groups }: { groups: any[] }) {
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Group</DialogTitle>
+              <DialogTitle>Editar Grupo</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Name</Label>
+                <Label>Nombre</Label>
                 <Input 
                   value={formData.name} 
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Order</Label>
+                <Label>Orden</Label>
                 <Input 
                   type="number"
                   value={formData.order} 
@@ -222,7 +222,7 @@ export function GroupList({ groups }: { groups: any[] }) {
                 />
               </div>
               <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
-                Update
+                Actualizar
               </Button>
             </div>
           </DialogContent>
